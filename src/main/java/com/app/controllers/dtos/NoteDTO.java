@@ -22,7 +22,7 @@ public class NoteDTO {
     String title;
     @Size(max = 500, message = "La descripción no puede tener más de 500 caracteres")
     String description;
-    UserEntity user;
+    Long userId;
 
 
 }

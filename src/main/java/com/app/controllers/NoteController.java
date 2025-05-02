@@ -3,7 +3,10 @@ package com.app.controllers;
 
 import com.app.controllers.dtos.NoteDTO;
 import com.app.entities.Note;
+import com.app.entities.UserEntity;
 import com.app.services.entitiyservices.implementations.NoteService;
+import com.app.services.entitiyservices.implementations.UserEntityService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,9 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
 
+    @Autowired
+    private UserEntityService userEntityService;
+
 
     @GetMapping("/findById/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
@@ -31,7 +37,7 @@ public class NoteController {
                     .id(id)
                     .title(note.getTitle())
                     .description(note.getDescription())
-                    .user(note.getUser())
+                    .userId(note.getUser().getId())
                     .build();
             return ResponseEntity.ok(noteDTO);
 
@@ -48,7 +54,7 @@ public class NoteController {
             .map(note -> NoteDTO.builder().id(note.getId())
                     .title(note.getTitle())
                     .description(note.getDescription())
-                    .user(note.getUser()).build()).toList();
+                    .userId(note.getUser().getId()).build()).toList();
 
         return ResponseEntity.ok(noteDTOList);
 
@@ -57,19 +63,21 @@ public class NoteController {
 
 
     @PostMapping("/saveNote")
-    public ResponseEntity<?> saveNote(@RequestBody NoteDTO noteDTO) throws URISyntaxException {
+    public ResponseEntity<?> saveNote(@RequestBody @Valid NoteDTO noteDTO) throws URISyntaxException {
 
-if(noteDTO.getTitle().isBlank()){
-    return ResponseEntity.badRequest().build();
-}
+        Optional<UserEntity> optionalUser = this.userEntityService.findById(noteDTO.getUserId());
 
-this.noteService.save(Note.builder()
-        .id(noteDTO.getId())
-        .title(noteDTO.getTitle())
-        .description(noteDTO.getDescription())
-        .user(noteDTO.getUser()).build());
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuario no encontrado");
+        }
 
-return ResponseEntity.created(new URI("/api/notes/saveNote")).build();
+
+        this.noteService.save(Note.builder()
+                .title(noteDTO.getTitle())
+                .description(noteDTO.getDescription())
+                .user(optionalUser.get()).build());
+
+       return ResponseEntity.created(new URI("/api/notes/saveNote")).build();
 
 
 }
@@ -80,17 +88,26 @@ return ResponseEntity.created(new URI("/api/notes/saveNote")).build();
     public ResponseEntity<?> updateNote(@PathVariable Long id, @RequestBody NoteDTO noteDTO){
 
         Optional<Note> noteOptional = this.noteService.findById(id);
-
-        if(noteOptional.isPresent()){
-           Note note = noteOptional.get();
-           note.setTitle(noteDTO.getTitle());
-           note.setDescription(noteDTO.getDescription());
-           note.setUser(noteDTO.getUser());
-           this.noteService.save(note);
-           return ResponseEntity.ok("Nota Actualizada");
+        if (noteOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.notFound().build();
+        Optional<UserEntity> optionalUser = this.userEntityService.findById(noteDTO.getUserId());
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.badRequest().body("Usuario no encontrado");
+        }
+
+        Note note = noteOptional.get();
+           note.setTitle(noteDTO.getTitle());
+           note.setDescription(noteDTO.getDescription());
+           note.setUser(optionalUser.get());
+           this.noteService.save(note);
+
+           return ResponseEntity.ok("Nota Actualizada");
+
+
+
 
 
 
@@ -118,7 +135,7 @@ return ResponseEntity.created(new URI("/api/notes/saveNote")).build();
 
 
 //
-//   FALTAN TODOS LOS ENDPOINTS DE NOTE , LOS DE ROLE??? , LOS DE PERMISSION???  HAY QUE VER COMO COMPAGINAR LAS AUTORIZACIONES CON ESTOS ENDPOINTS
+//   HAY QUE VER COMO COMPAGINAR LAS AUTORIZACIONES CON ESTOS ENDPOINTS
 //            SUBIR A GITHUB Y PASARLE A CHAT
 
 
