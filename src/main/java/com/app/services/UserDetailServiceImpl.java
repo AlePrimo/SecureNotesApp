@@ -110,20 +110,20 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     public AuthResponse createUser(AuthCreateUserRequest authCreateUserRequest){
 
-        String username = authCreateUserRequest.username(); //OBTENEMOS EL USERNAME
-        String password = authCreateUserRequest.password(); //OBTENEMOS EL PASSWORD
+        String username = authCreateUserRequest.username();
+        String password = authCreateUserRequest.password();
 
-        List<String> roleRequest = authCreateUserRequest.roleRequest().roleListName(); //OBTENEMOS LA LISTA DE ROLES QUE SUPUESTAMENTE VA A TENER EL USUARIO
+        List<String> roleRequest = authCreateUserRequest.roleRequest().roleListName();
 
-        Set<RoleEntity> roleEntitySet = this.roleEntityService.findRoleEntityByRoleEnumIn(roleRequest).stream().collect(Collectors.toSet()); //COMPROBAMOS QUE LA LISTA
-        // DE ROLES QUE SUPUESTAMENTE VA A TENER EL USUARIO CORRESPONDAN A LOS ROLES QUE ESTAN ESPECIFICADOS EN BASE DE DATOS
+        Set<RoleEntity> roleEntitySet = this.roleEntityService.findRoleEntityByRoleEnumIn(roleRequest).stream().collect(Collectors.toSet());
 
-        if(roleEntitySet.isEmpty()){ // VERIFICAMOS QUE SI LOS ROLES CON QUE SE PRETENDE REGISTRAR EL USUARIO NO EXISTEN ,EL SET DE ROLES ESTARA VACIO
-            // SI ES ASI EL SISTEMA DARA UNA EXCEPCION
+
+        if(roleEntitySet.isEmpty()){
+
             throw new IllegalArgumentException("The specified roles does not exist");
         }
 
-        // UNA VEZ VERIFICADOS LOS ROLES  , SE CREA EL USUARIO CON TODOS SUS ATRIBUTOS
+
         UserEntity userEntity = UserEntity.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
@@ -135,19 +135,13 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .build();
 
 
-        // UNA VEZ CREADO EL USUARIO SE GUARDA EN BASE DE DATOS Y SE LO ASIGNA A UN OBJETO USERCREATED
+
         UserEntity userCreated = this.userEntityService.save(userEntity);
 
-        //CREAMOS UNA LISTA PARA AGREGAR LOS ROLES DEL CLIENTE  DEL TIPO SIMPLEGRANTEDAUTHORITY PARA QUE SPRING LO RECONCOZCA Y LO MANEJE
+
         ArrayList<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 
-        //LUEGO ACCEDEMOS AL SET DE ROLES QUE TIENE EL USUARIO CREADO Y AL RECORRERLO VAMOS CREANDO UN OBJETO SIMPLEGRANTED Y LOS VAMOS AGREGANDO A LA LISTA ANTERIOR
-        userCreated.getRoles().forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name())))); //SIEMPRE AGREGAR LOS ROLES COMO "ROLE_"
-        //MAS EL NOMBRE CONCATENADO
-
-
-        //LUEDO DE ESTO DEBEMOS ACCEDER A LOS PERMISOS QUE TIENE CADA ROLE ,PARA ESO VAMOS A NECESITAR USAR DOS STREAMS , UNO QUE RECORRA LA LISTA DE ROLES Y OTRO QUE RECORRA
-        //LA LISTA DE PERMISOS QUE TIENE CADA ROLE, Y QUE VAYA AGREGANDOLOS A LA LISTA AUTHORITYLIST
+        userCreated.getRoles().forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
 
         userCreated.getRoles()
                 .stream() //PRIMER STREAM PARA RECORRER LOS ROLES
@@ -156,17 +150,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
 
 
-
-        //LUEGO DEBEMOS AUTENTICAR EL USUARIO CON SU USERNAME, PASSWORD Y LA LISTA DE AUTHORITIES QUE POSEE
-
         Authentication authentication = new UsernamePasswordAuthenticationToken(userCreated.getUsername(), userCreated.getPassword(), authorityList);
 
-
-        //CREAR EL TOKEN CON LA AUTENTICACION
-
         String accessToken = jwtUtils.createToken(authentication);
-
-        //CREAR EL OBJETO AUTHRESPONSE CON SUS ATRIBUTOS
 
         AuthResponse authResponse = new AuthResponse(userCreated.getUsername(),"User created succesfully", accessToken, true);
 
