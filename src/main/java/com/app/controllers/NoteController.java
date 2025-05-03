@@ -1,6 +1,7 @@
 package com.app.controllers;
 
 
+import com.app.controllers.dtos.CreateNoteDTO;
 import com.app.controllers.dtos.NoteDTO;
 import com.app.entities.Note;
 import com.app.entities.UserEntity;
@@ -31,65 +32,94 @@ public class NoteController {
 
 
     @GetMapping("/findById/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> findById(@PathVariable Long id, Authentication authentication) {
         Optional<Note> noteOptional = this.noteService.findById(id);
 
-        if(noteOptional.isPresent()){
-         Note note = noteOptional.get();
-            NoteDTO noteDTO = NoteDTO.builder()
-                    .id(id)
-                    .title(note.getTitle())
-                    .description(note.getDescription())
-                    .userId(note.getUser().getId())
-                    .build();
-            return ResponseEntity.ok(noteDTO);
-
+        if (noteOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
-       return ResponseEntity.notFound().build();
+
+        Note note = noteOptional.get();
+
+        String username = authentication.getName();
+
+        boolean isAdmin = isAdmin(authentication);
+
+        if (!note.getUser().getUsername().equals(username) && !isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permisos para ver esta nota");
+        }
+
+        NoteDTO noteDTO = NoteDTO.builder()
+                .id(note.getId())
+                .title(note.getTitle())
+                .description(note.getDescription())
+                .userId(note.getUser().getId())
+                .build();
+        return ResponseEntity.ok(noteDTO);
+
 
     }
 
 
     @GetMapping("/findAll")
-    public ResponseEntity<?> findAll(){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> findAll(Authentication authentication) {
 
-        List<NoteDTO> noteDTOList = this.noteService.findAll().stream()
-            .map(note -> NoteDTO.builder().id(note.getId())
-                    .title(note.getTitle())
-                    .description(note.getDescription())
-                    .userId(note.getUser().getId()).build()).toList();
+
+        String username = authentication.getName();
+        boolean isAdmin = isAdmin(authentication);
+
+
+        List<Note> notes;
+
+        if (isAdmin) {
+            notes = this.noteService.findAll();
+        } else {
+            notes = this.noteService.findByUserUsername(username);
+        }
+
+
+        List<NoteDTO> noteDTOList = notes.stream()
+                .map(note -> NoteDTO.builder().id(note.getId())
+                        .title(note.getTitle())
+                        .description(note.getDescription())
+                        .userId(note.getUser().getId()).build()).toList();
 
         return ResponseEntity.ok(noteDTOList);
 
-}
-
+    }
 
 
     @PostMapping("/saveNote")
-    public ResponseEntity<?> saveNote(@RequestBody @Valid NoteDTO noteDTO) throws URISyntaxException {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> saveNote(@RequestBody @Valid CreateNoteDTO createNoteDTO, Authentication authentication) throws URISyntaxException {
 
-        Optional<UserEntity> optionalUser = this.userEntityService.findById(noteDTO.getUserId());
+        String username = authentication.getName();
+
+        Optional<UserEntity> optionalUser = this.userEntityService.findByUsername(username);
+
 
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.badRequest().body("Usuario no encontrado");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no válido");
         }
 
 
         this.noteService.save(Note.builder()
-                .title(noteDTO.getTitle())
-                .description(noteDTO.getDescription())
-                .user(optionalUser.get()).build());
+                .title(createNoteDTO.getTitle())
+                .description(createNoteDTO.getDescription())
+                .user(optionalUser.get())
+                .build());
 
-       return ResponseEntity.created(new URI("/api/notes/saveNote")).build();
+        return ResponseEntity.created(new URI("/api/notes/saveNote")).build();
 
 
-}
-
+    }
 
 
     @PutMapping("/updateNote/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateNote(@PathVariable Long id, @RequestBody NoteDTO noteDTO, Authentication authentication){
+    public ResponseEntity<?> updateNote(@PathVariable Long id, @RequestBody NoteDTO noteDTO, Authentication authentication) {
 
         Optional<Note> noteOptional = this.noteService.findById(id);
         if (noteOptional.isEmpty()) {
@@ -103,33 +133,26 @@ public class NoteController {
         }
 
         String username = authentication.getName();
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        boolean isAdmin = isAdmin(authentication);
 
         if (!note.getUser().getUsername().equals(username) && !isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permisos para editar esta nota");
         }
 
 
+        note.setTitle(noteDTO.getTitle());
+        note.setDescription(noteDTO.getDescription());
+        this.noteService.save(note);
 
-           note.setTitle(noteDTO.getTitle());
-           note.setDescription(noteDTO.getDescription());
-           note.setUser(optionalUser.get());
-           this.noteService.save(note);
-
-           return ResponseEntity.ok("Nota Actualizada");
+        return ResponseEntity.ok("Nota Actualizada");
 
 
-
-
-
-
-}
+    }
 
 
     @DeleteMapping("/deleteById/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> deleteById(@PathVariable Long id ,Authentication authentication) {
+    public ResponseEntity<?> deleteById(@PathVariable Long id, Authentication authentication) {
 
         Optional<Note> noteOptional = this.noteService.findById(id);
 
@@ -140,9 +163,8 @@ public class NoteController {
         Note note = noteOptional.get();
 
         String authUsername = authentication.getName();
+        boolean isAdmin = isAdmin(authentication);
 
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
         if (!note.getUser().getUsername().equals(authUsername) && !isAdmin) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permiso para eliminar esta nota");
@@ -157,15 +179,19 @@ public class NoteController {
 
 
 
-
-
-
-
-//
-//   HAY QUE VER COMO COMPAGINAR LAS AUTORIZACIONES CON ESTOS ENDPOINTS
-//            SUBIR A GITHUB Y PASARLE A CHAT
-
-
+    private boolean isAdmin(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+    }
 
 
 }
+
+
+//        3-HAY ATRIBUTOS DEL USUARIO QUE NO ESTAN EN AuthCreateUserRequest
+//    4-COMO SE PASA EL ROLE O LA LISTA DE ROLES POR PARAMETRO EN POSTMAN
+//        5-VER QUE AUTORIZACIONES ESPECIALES PUEDE HACER EL DEVELOPER(PODRIA ACCEDER A TODO??)
+
+
+
+

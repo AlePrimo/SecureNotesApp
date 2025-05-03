@@ -35,4 +35,9 @@ public class NoteDAOImpl implements INoteDAO {
     public void deleteById(Long id) {
          this.noteRepository.deleteById(id);
     }
+
+    @Override
+    public List<Note> findByUserUsername(String username) {
+        return this.noteRepository.findByUserUsername(username);
+    }
 }

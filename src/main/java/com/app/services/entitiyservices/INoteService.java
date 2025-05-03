@@ -11,5 +11,5 @@ public interface INoteService {
     Optional<Note> findById(Long id);
     void save(Note note);
     void deleteById(Long id);
-
+    List<Note> findByUserUsername(String username);
 }

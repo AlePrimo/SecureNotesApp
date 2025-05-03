@@ -35,4 +35,9 @@ public class NoteService implements INoteService {
     public void deleteById(Long id) {
 this.noteDAO.deleteById(id);
     }
+
+    @Override
+    public List<Note> findByUserUsername(String username) {
+        return this.noteDAO.findByUserUsername(username);
+    }
 }
