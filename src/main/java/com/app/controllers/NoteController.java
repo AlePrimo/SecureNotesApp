@@ -8,7 +8,10 @@ import com.app.services.entitiyservices.implementations.NoteService;
 import com.app.services.entitiyservices.implementations.UserEntityService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -85,20 +88,30 @@ public class NoteController {
 
 
     @PutMapping("/updateNote/{id}")
-    public ResponseEntity<?> updateNote(@PathVariable Long id, @RequestBody NoteDTO noteDTO){
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> updateNote(@PathVariable Long id, @RequestBody NoteDTO noteDTO, Authentication authentication){
 
         Optional<Note> noteOptional = this.noteService.findById(id);
         if (noteOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
+        Note note = noteOptional.get();
         Optional<UserEntity> optionalUser = this.userEntityService.findById(noteDTO.getUserId());
 
         if (optionalUser.isEmpty()) {
             return ResponseEntity.badRequest().body("Usuario no encontrado");
         }
 
-        Note note = noteOptional.get();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!note.getUser().getUsername().equals(username) && !isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permisos para editar esta nota");
+        }
+
+
+
            note.setTitle(noteDTO.getTitle());
            note.setDescription(noteDTO.getDescription());
            note.setUser(optionalUser.get());
@@ -115,17 +128,31 @@ public class NoteController {
 
 
     @DeleteMapping("/deleteById/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> deleteById(@PathVariable Long id ,Authentication authentication) {
+
         Optional<Note> noteOptional = this.noteService.findById(id);
 
-     if(id != null && noteOptional.isPresent()){
-          this.noteService.deleteById(id);
-          return ResponseEntity.ok("Nota Eliminada");}
+        if (noteOptional.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return ResponseEntity.notFound().build();
+        Note note = noteOptional.get();
+
+        String authUsername = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!note.getUser().getUsername().equals(authUsername) && !isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permiso para eliminar esta nota");
+        }
+
+
+        this.noteService.deleteById(id);
+        return ResponseEntity.ok("Nota eliminada con éxito");
+
     }
-
-
 
 
 

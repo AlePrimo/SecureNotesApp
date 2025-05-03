@@ -4,10 +4,14 @@ import com.app.entities.PermissionEntity;
 import com.app.persistence.IPermissionEntityDAO;
 import com.app.repositories.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 
 import java.util.List;
 import java.util.Optional;
 
+
+@Component
 public class PermissionEntityDAO implements IPermissionEntityDAO {
 
     @Autowired

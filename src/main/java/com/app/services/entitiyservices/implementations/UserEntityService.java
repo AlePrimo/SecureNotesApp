@@ -5,7 +5,6 @@ import com.app.persistence.implementations.UserEntityDAOImpl;
 import com.app.services.entitiyservices.IUserEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 

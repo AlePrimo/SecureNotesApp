@@ -4,10 +4,13 @@ import com.app.entities.RoleEntity;
 import com.app.persistence.IRoleEntityDAO;
 import com.app.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+
+@Component
 public class RoleEntityDAO implements IRoleEntityDAO {
 
     @Autowired
