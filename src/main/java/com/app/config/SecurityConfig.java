@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -32,50 +33,38 @@ public class SecurityConfig {
     @Autowired
     private JwtUtils jwtUtils;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtTokenValidator(jwtUtils), BasicAuthenticationFilter.class)
+                .authenticationProvider(authenticationProvider(userDetailServiceImpl()))
                 .build();
-
-
-
-
-
     }
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-
         return authenticationConfiguration.getAuthenticationManager();
-
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailServiceImpl userDetailService){
-
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(userDetailService);
-
+        provider.setUserDetailsService(userDetailsService);
         return provider;
     }
 
-
-
-
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    public UserDetailServiceImpl userDetailServiceImpl() {
+        return new UserDetailServiceImpl();
     }
 
-
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }

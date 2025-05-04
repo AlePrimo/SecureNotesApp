@@ -2,7 +2,6 @@ package com.app.services;
 
 
 import com.app.controllers.dtos.authdto.AuthCreateUserRequest;
-import com.app.controllers.dtos.authdto.AuthLoginRequest;
 import com.app.controllers.dtos.authdto.AuthResponse;
 import com.app.entities.RoleEntity;
 import com.app.entities.UserEntity;
@@ -10,11 +9,9 @@ import com.app.services.entitiyservices.implementations.RoleEntityService;
 import com.app.services.entitiyservices.implementations.UserEntityService;
 import com.app.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -43,6 +40,9 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -68,44 +68,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     }
 
-    public AuthResponse loginUser(AuthLoginRequest authLoginRequest){
 
-        String username = authLoginRequest.username();
-        String password = authLoginRequest.password();
-
-        Authentication authentication = this.authenticate(username, password);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-
-        String accessToken = jwtUtils.createToken(authentication);
-
-        AuthResponse authResponse = new AuthResponse(username,"Login Succesfully",accessToken,true);
-
-        return authResponse;
-
-
-
-    }
-
-
-    public Authentication authenticate(String username, String password){
-
-        UserDetails userDetails= this.loadUserByUsername(username);
-
-        if(userDetails == null){
-            throw  new BadCredentialsException("Invalid username or password");
-        }
-
-        if(!passwordEncoder.matches(password, userDetails.getPassword())){
-            throw  new BadCredentialsException("Invalid  password");
-        }
-
-
-       return new UsernamePasswordAuthenticationToken(username, userDetails.getPassword(),userDetails.getAuthorities());
-
-
-
-    }
 
 
     public AuthResponse createUser(AuthCreateUserRequest authCreateUserRequest){
@@ -123,6 +86,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new IllegalArgumentException("The specified roles does not exist");
         }
 
+
+
+        if (this.userEntityService.findByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("El nombre de usuario ya está registrado");
+        }
 
         UserEntity userEntity = UserEntity.builder()
                 .username(username)
