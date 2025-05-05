@@ -1,6 +1,7 @@
 package com.app.persistence.implementations;
 
 import com.app.entities.RoleEntity;
+import com.app.entities.RoleEnum;
 import com.app.persistence.IRoleEntityDAO;
 import com.app.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ public class RoleEntityDAO implements IRoleEntityDAO {
     }
 
     @Override
-    public void save(RoleEntity role) {
-      this.roleRepository.save(role);
+    public RoleEntity save(RoleEntity role) {
+      return this.roleRepository.save(role);
     }
 
     @Override
@@ -39,5 +40,10 @@ public class RoleEntityDAO implements IRoleEntityDAO {
     @Override
     public List<RoleEntity> findRoleEntityByRoleEnumIn(List<String> roleNames) {
         return this.roleRepository.findRoleEntityByRoleEnumIn(roleNames);
+    }
+
+    @Override
+    public Optional<RoleEntity> findByRoleEnum(RoleEnum roleEnum) {
+        return this.roleRepository.findByRoleEnum(roleEnum);
     }
 }

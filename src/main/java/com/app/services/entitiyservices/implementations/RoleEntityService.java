@@ -1,6 +1,7 @@
 package com.app.services.entitiyservices.implementations;
 
 import com.app.entities.RoleEntity;
+import com.app.entities.RoleEnum;
 import com.app.persistence.implementations.RoleEntityDAO;
 import com.app.services.entitiyservices.IRoleEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class RoleEntityService implements IRoleEntityService {
     }
 
     @Override
-    public void save(RoleEntity role) {
-this.roleEntityDAO.save(role);
+    public RoleEntity save(RoleEntity role) {
+return this.roleEntityDAO.save(role);
     }
 
     @Override
@@ -40,4 +41,11 @@ this.roleEntityDAO.deleteById(id);
     public List<RoleEntity> findRoleEntityByRoleEnumIn(List<String> roleNames) {
         return this.roleEntityDAO.findRoleEntityByRoleEnumIn(roleNames);
     }
+
+    @Override
+    public Optional<RoleEntity> findByRoleEnum(RoleEnum roleEnum) {
+        return Optional.empty();
+    }
+
+
 }

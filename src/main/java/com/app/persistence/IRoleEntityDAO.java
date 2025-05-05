@@ -1,6 +1,7 @@
 package com.app.persistence;
 
 import com.app.entities.RoleEntity;
+import com.app.entities.RoleEnum;
 
 
 import java.util.List;
@@ -10,9 +11,9 @@ public interface IRoleEntityDAO {
 
     List<RoleEntity> findAll();
     Optional<RoleEntity> findById(Long id);
-    void save(RoleEntity role);
+    RoleEntity save(RoleEntity role);
     void deleteById(Long id);
     List<RoleEntity> findRoleEntityByRoleEnumIn (List<String> roleNames);
-
+    Optional<RoleEntity> findByRoleEnum(RoleEnum roleEnum);
 
 }

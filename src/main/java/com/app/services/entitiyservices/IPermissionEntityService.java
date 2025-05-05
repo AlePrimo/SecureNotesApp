@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface IPermissionEntityService {
     List<PermissionEntity> findAll();
     Optional<PermissionEntity> findById(Long id);
-    void save(PermissionEntity permission);
+    PermissionEntity save(PermissionEntity permission);
     void deleteById(Long id);
+    Optional<PermissionEntity> findByName(String name);
 }
