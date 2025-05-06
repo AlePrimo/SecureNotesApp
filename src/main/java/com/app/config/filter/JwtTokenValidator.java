@@ -22,7 +22,6 @@ import java.util.Collection;
 public class JwtTokenValidator extends OncePerRequestFilter {
 
 
-
     private JwtUtils jwtUtils;
 
     public JwtTokenValidator(JwtUtils jwtUtils) {
@@ -30,12 +29,13 @@ public class JwtTokenValidator extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal( @NonNull HttpServletRequest request
-                                    ,@NonNull HttpServletResponse response
-                                    ,@NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request
+            , @NonNull HttpServletResponse response
+            , @NonNull FilterChain filterChain) throws ServletException, IOException {
 
 
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+
 
         if (jwtToken != null) {
 
@@ -47,23 +47,14 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
             Collection<? extends GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(stringAuthorities);
 
-            SecurityContext context = SecurityContextHolder.getContext(); // 1
-            Authentication authentication = new UsernamePasswordAuthenticationToken(username,null,authorities); // 2
-            context.setAuthentication(authentication);
-            SecurityContextHolder.setContext(context);
 
-
-
-
+            Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, authorities); // 2
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
 
         }
 
-        filterChain.doFilter(request,response);
-
-
-
-
+        filterChain.doFilter(request, response);
 
 
     }

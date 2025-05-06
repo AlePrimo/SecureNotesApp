@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserEntityRepository extends CrudRepository<UserEntity,Long> {
+public interface UserEntityRepository extends CrudRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByUsername(String username);
 

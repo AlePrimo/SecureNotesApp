@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 @Entity
 @Table(name = "permissions")
@@ -21,6 +24,7 @@ public class PermissionEntity {
 
     @Column(unique = true, nullable = false, updatable = false)
     String name;
-
+    @ManyToMany(mappedBy = "permissions")
+    private Set<RoleEntity> roles = new HashSet<>();
 
 }

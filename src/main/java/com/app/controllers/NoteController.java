@@ -177,8 +177,6 @@ public class NoteController {
     }
 
 
-
-
     private boolean isAdmin(Authentication authentication) {
         return authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));

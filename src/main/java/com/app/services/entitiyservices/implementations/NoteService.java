@@ -28,12 +28,12 @@ public class NoteService implements INoteService {
 
     @Override
     public void save(Note note) {
-       this.noteDAO.save(note);
+        this.noteDAO.save(note);
     }
 
     @Override
     public void deleteById(Long id) {
-this.noteDAO.deleteById(id);
+        this.noteDAO.deleteById(id);
     }
 
     @Override

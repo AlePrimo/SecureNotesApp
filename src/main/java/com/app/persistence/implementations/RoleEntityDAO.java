@@ -16,6 +16,7 @@ public class RoleEntityDAO implements IRoleEntityDAO {
 
     @Autowired
     private RoleRepository roleRepository;
+
     @Override
     public List<RoleEntity> findAll() {
         return this.roleRepository.findAll();
@@ -28,7 +29,7 @@ public class RoleEntityDAO implements IRoleEntityDAO {
 
     @Override
     public RoleEntity save(RoleEntity role) {
-      return this.roleRepository.save(role);
+        return this.roleRepository.save(role);
     }
 
     @Override

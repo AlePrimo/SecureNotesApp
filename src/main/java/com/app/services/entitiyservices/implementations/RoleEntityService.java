@@ -29,12 +29,12 @@ public class RoleEntityService implements IRoleEntityService {
 
     @Override
     public RoleEntity save(RoleEntity role) {
-return this.roleEntityDAO.save(role);
+        return this.roleEntityDAO.save(role);
     }
 
     @Override
     public void deleteById(Long id) {
-this.roleEntityDAO.deleteById(id);
+        this.roleEntityDAO.deleteById(id);
     }
 
     @Override
@@ -44,7 +44,7 @@ this.roleEntityDAO.deleteById(id);
 
     @Override
     public Optional<RoleEntity> findByRoleEnum(RoleEnum roleEnum) {
-        return Optional.empty();
+        return this.roleEntityDAO.findByRoleEnum(roleEnum);
     }
 
 

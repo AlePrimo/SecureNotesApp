@@ -5,6 +5,7 @@ import com.app.persistence.implementations.UserEntityDAOImpl;
 import com.app.services.entitiyservices.IUserEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ public class UserEntityService implements IUserEntityService {
 
     @Autowired
     private UserEntityDAOImpl userEntityDAO;
+
     @Override
     public List<UserEntity> findAll() {
         return this.userEntityDAO.findAll();
@@ -26,12 +28,12 @@ public class UserEntityService implements IUserEntityService {
 
     @Override
     public UserEntity save(UserEntity user) {
-      return this.userEntityDAO.save(user);
+        return this.userEntityDAO.save(user);
     }
 
     @Override
     public void deleteById(Long id) {
-this.userEntityDAO.deleteById(id);
+        this.userEntityDAO.deleteById(id);
     }
 
     @Override

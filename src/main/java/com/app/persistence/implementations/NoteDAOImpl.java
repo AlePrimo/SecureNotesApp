@@ -33,7 +33,7 @@ public class NoteDAOImpl implements INoteDAO {
 
     @Override
     public void deleteById(Long id) {
-         this.noteRepository.deleteById(id);
+        this.noteRepository.deleteById(id);
     }
 
     @Override

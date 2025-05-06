@@ -10,11 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
+
 
     private final PermissionEntityService permissionService;
     private final RoleEntityService roleService;
@@ -23,37 +26,51 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        PermissionEntity read = createPermission("READ");
-        PermissionEntity write = createPermission("WRITE");
-        PermissionEntity delete = createPermission("DELETE");
-        PermissionEntity createAdmin = createPermission("CREATE_ADMIN");
 
-        // roles
+        List<String> perms = List.of("READ", "WRITE", "DELETE", "CREATE_ADMIN");
+        perms.forEach(this::createPermission);
+
+
+        PermissionEntity read = permissionService.findByName("READ").get();
+        PermissionEntity write = permissionService.findByName("WRITE").get();
+        PermissionEntity delete = permissionService.findByName("DELETE").get();
+        PermissionEntity createAdmin = permissionService.findByName("CREATE_ADMIN").get();
+
+
         createRole(RoleEnum.ADMIN, Set.of(read, write, delete));
-        createRole(RoleEnum.USER, Set.of(read,write));
-        createRole(RoleEnum.DEVELOPER, Set.of(read, write,delete, createAdmin));
+        createRole(RoleEnum.USER, Set.of(read, write));
+        createRole(RoleEnum.DEVELOPER, Set.of(read, write, delete, createAdmin));
     }
 
-    private PermissionEntity createPermission(String name) {
+
+    public PermissionEntity createPermission(String name) {
+
         return this.permissionService.findByName(name)
-                .orElseGet(() -> this.permissionService.save(PermissionEntity.builder().name(name).build()));
+                .orElseGet(() -> {
+                    PermissionEntity permission = PermissionEntity.builder().name(name).build();
+                    this.permissionService.save(permission);
+
+                    return this.permissionService.findByName(name)
+                            .orElseThrow(() -> new RuntimeException("Permission could not be found after creation: " + name));
+                });
     }
 
+    public RoleEntity createRole(RoleEnum roleEnum, Set<PermissionEntity> permissions) {
+        return this.roleService.findByRoleEnum(roleEnum)
+                .orElseGet(() -> {
 
-    private void createRole(RoleEnum roleEnum, Set<PermissionEntity> permissions) {
-        this.roleService.findByRoleEnum(roleEnum)
-                .orElseGet(() -> this.roleService.save(
-                        RoleEntity.builder()
-                                .roleEnum(roleEnum)
-                                .permissions(permissions)
-                                .build()
-                ));
+                    Set<PermissionEntity> managedPermissions = permissions.stream()
+                            .map(p -> permissionService.findByName(p.getName())
+                                    .orElseThrow(() -> new RuntimeException("Permission not found: " + p.getName())))
+                            .collect(Collectors.toSet());
+
+                    RoleEntity newRole = RoleEntity.builder()
+                            .roleEnum(roleEnum)
+                            .permissions(managedPermissions)
+                            .build();
+
+                    return this.roleService.save(newRole);
+                });
     }
-
-
-
-
-
-
 
 }

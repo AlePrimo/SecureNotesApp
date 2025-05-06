@@ -8,8 +8,12 @@ import java.util.Optional;
 public interface INoteDAO {
 
     List<Note> findAll();
+
     Optional<Note> findById(Long id);
+
     void save(Note note);
+
     void deleteById(Long id);
+
     List<Note> findByUserUsername(String username);
 }

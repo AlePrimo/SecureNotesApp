@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface NoteRepository extends CrudRepository <Note, Long> {
+public interface NoteRepository extends CrudRepository<Note, Long> {
     List<Note> findByUserUsername(String username);
 }

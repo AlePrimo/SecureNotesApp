@@ -41,13 +41,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
 
-
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         UserEntity userEntity = this.userEntityService.findByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("El usuario " +username+ " no existe en la base de datos"));
+                .orElseThrow(() -> new UsernameNotFoundException("El usuario " + username + " no existe en la base de datos"));
 
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -61,17 +59,15 @@ public class UserDetailServiceImpl implements UserDetailsService {
         return new User(userEntity.getUsername()
                 , userEntity.getPassword()
                 , userEntity.isEnabled()
-                ,userEntity.isAccountNotExpired()
-                ,userEntity.isCredentialsNotExpired()
-                ,userEntity.isAccountNotLocked(), authorities);
+                , userEntity.isAccountNotExpired()
+                , userEntity.isCredentialsNotExpired()
+                , userEntity.isAccountNotLocked(), authorities);
 
 
     }
 
 
-
-
-    public AuthResponse createUser(AuthCreateUserRequest authCreateUserRequest){
+    public AuthResponse createUser(AuthCreateUserRequest authCreateUserRequest) {
 
         String username = authCreateUserRequest.username();
         String password = authCreateUserRequest.password();
@@ -81,11 +77,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
         Set<RoleEntity> roleEntitySet = this.roleEntityService.findRoleEntityByRoleEnumIn(roleRequest).stream().collect(Collectors.toSet());
 
 
-        if(roleEntitySet.isEmpty()){
+        if (roleEntitySet.isEmpty()) {
 
             throw new IllegalArgumentException("The specified roles does not exist");
         }
-
 
 
         if (this.userEntityService.findByUsername(username).isPresent()) {
@@ -103,7 +98,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .build();
 
 
-
         UserEntity userCreated = this.userEntityService.save(userEntity);
 
 
@@ -112,31 +106,21 @@ public class UserDetailServiceImpl implements UserDetailsService {
         userCreated.getRoles().forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
 
         userCreated.getRoles()
-                .stream() //PRIMER STREAM PARA RECORRER LOS ROLES
-                .flatMap(role -> role.getPermissions().stream())//SEGUNDO STREAM RECORRE LOS PERMISOS DE CADA ROLE
-                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName()))); // AGREGAMOS CADA PERMISO A LA LISTA
-
-
+                .stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userCreated.getUsername(), userCreated.getPassword(), authorityList);
 
         String accessToken = jwtUtils.createToken(authentication);
 
-        AuthResponse authResponse = new AuthResponse(userCreated.getUsername(),"User created succesfully", accessToken, true);
+        AuthResponse authResponse = new AuthResponse(userCreated.getUsername(), "User created succesfully", accessToken, true);
 
 
         return authResponse;
 
 
-
     }
-
-
-
-
-
-
-
 
 
 }

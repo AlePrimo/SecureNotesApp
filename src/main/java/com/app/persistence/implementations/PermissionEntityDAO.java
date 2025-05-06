@@ -16,6 +16,7 @@ public class PermissionEntityDAO implements IPermissionEntityDAO {
 
     @Autowired
     private PermissionRepository permissionRepository;
+
     @Override
     public List<PermissionEntity> findAll() {
         return (List<PermissionEntity>) this.permissionRepository.findAll();
@@ -29,7 +30,7 @@ public class PermissionEntityDAO implements IPermissionEntityDAO {
     @Override
     public PermissionEntity save(PermissionEntity permission) {
         this.permissionRepository.save(permission);
-      return permission;
+        return permission;
     }
 
     @Override

@@ -27,12 +27,12 @@ public class PermissionEntityService implements IPermissionEntityService {
 
     @Override
     public PermissionEntity save(PermissionEntity permission) {
-         return this.permissionEntityDAO.save(permission);
+        return this.permissionEntityDAO.save(permission);
     }
 
     @Override
     public void deleteById(Long id) {
-this.permissionEntityDAO.deleteById(id);
+        this.permissionEntityDAO.deleteById(id);
     }
 
     @Override

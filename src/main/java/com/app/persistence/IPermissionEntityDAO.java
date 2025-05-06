@@ -9,8 +9,11 @@ import java.util.Optional;
 public interface IPermissionEntityDAO {
 
     List<PermissionEntity> findAll();
+
     Optional<PermissionEntity> findById(Long id);
+
     PermissionEntity save(PermissionEntity permission);
+
     void deleteById(Long id);
 
     Optional<PermissionEntity> findByName(String name);

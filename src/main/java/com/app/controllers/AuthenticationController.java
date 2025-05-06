@@ -1,8 +1,6 @@
 package com.app.controllers;
 
 
-
-
 import com.app.controllers.dtos.authdto.AuthCreateUserRequest;
 import com.app.controllers.dtos.authdto.AuthLoginRequest;
 import com.app.controllers.dtos.authdto.AuthResponse;
@@ -29,23 +27,15 @@ public class AuthenticationController {
 
     @PostMapping("/sign-up")
 
-    public ResponseEntity<AuthResponse> register(@RequestBody @Valid AuthCreateUserRequest authCreateUser){
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid AuthCreateUserRequest authCreateUser) {
         return new ResponseEntity<>(this.userDetailService.createUser(authCreateUser), HttpStatus.CREATED);
 
     }
+
     @PostMapping("/log-in")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthLoginRequest request) {
-        return ResponseEntity.ok(authService.loginUser(request));
+        return ResponseEntity.ok(this.authService.loginUser(request));
     }
-
-
-
-
-
-
-
-
-
 
 
 }
