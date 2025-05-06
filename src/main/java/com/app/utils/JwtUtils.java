@@ -31,7 +31,7 @@ public class JwtUtils {
 
         Algorithm algorithm = Algorithm.HMAC256(this.privateKey);
 
-        String username = authentication.getPrincipal().toString();
+        String username = authentication.getName();
 
         String authorities = authentication
                 .getAuthorities()

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,7 +56,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .flatMap(role -> role.getPermissions().stream())
                 .forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission.getName())));
 
-        return new User(userEntity.getUsername()
+        return new org.springframework.security.core.userdetails.User(userEntity.getUsername()
                 , userEntity.getPassword()
                 , userEntity.isEnabled()
                 , userEntity.isAccountNotExpired()

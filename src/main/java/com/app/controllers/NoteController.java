@@ -43,10 +43,10 @@ public class NoteController {
         Note note = noteOptional.get();
 
         String username = authentication.getName();
-
         boolean isAdmin = isAdmin(authentication);
+        boolean isDeveloper = isDeveloper(authentication);
 
-        if (!note.getUser().getUsername().equals(username) && !isAdmin) {
+        if (!note.getUser().getUsername().equals(username) && !isAdmin && !isDeveloper) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permisos para ver esta nota");
         }
 
@@ -69,11 +69,12 @@ public class NoteController {
 
         String username = authentication.getName();
         boolean isAdmin = isAdmin(authentication);
+        boolean isDeveloper = isDeveloper(authentication);
 
 
         List<Note> notes;
 
-        if (isAdmin) {
+        if (isAdmin || isDeveloper) {
             notes = this.noteService.findAll();
         } else {
             notes = this.noteService.findByUserUsername(username);
@@ -99,6 +100,7 @@ public class NoteController {
 
         Optional<UserEntity> optionalUser = this.userEntityService.findByUsername(username);
 
+        System.out.println("Username extraído del token: " + username);
 
         if (optionalUser.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario no válido");
@@ -117,6 +119,10 @@ public class NoteController {
     }
 
 
+
+
+
+
     @PutMapping("/updateNote/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateNote(@PathVariable Long id, @RequestBody NoteDTO noteDTO, Authentication authentication) {
@@ -125,17 +131,13 @@ public class NoteController {
         if (noteOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
         Note note = noteOptional.get();
-        Optional<UserEntity> optionalUser = this.userEntityService.findById(noteDTO.getUserId());
-
-        if (optionalUser.isEmpty()) {
-            return ResponseEntity.badRequest().body("Usuario no encontrado");
-        }
-
         String username = authentication.getName();
         boolean isAdmin = isAdmin(authentication);
+        boolean isDeveloper = isDeveloper(authentication);
 
-        if (!note.getUser().getUsername().equals(username) && !isAdmin) {
+        if (!note.getUser().getUsername().equals(username) && !isAdmin && !isDeveloper) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permisos para editar esta nota");
         }
 
@@ -154,27 +156,23 @@ public class NoteController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteById(@PathVariable Long id, Authentication authentication) {
 
+
         Optional<Note> noteOptional = this.noteService.findById(id);
 
         if (noteOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        Note note = noteOptional.get();
-
-        String authUsername = authentication.getName();
-        boolean isAdmin = isAdmin(authentication);
-
-
-        if (!note.getUser().getUsername().equals(authUsername) && !isAdmin) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permiso para eliminar esta nota");
+        if (!isAdmin(authentication) && !isDeveloper(authentication)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No tienes permiso para eliminar notas");
         }
-
 
         this.noteService.deleteById(id);
         return ResponseEntity.ok("Nota eliminada con éxito");
 
+
     }
+
 
 
     private boolean isAdmin(Authentication authentication) {
@@ -183,12 +181,19 @@ public class NoteController {
     }
 
 
+    private boolean isDeveloper(Authentication auth) {
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_DEVELOPER"));
+    }
+
+
+
+
+
+
 }
 
 
-//        3-HAY ATRIBUTOS DEL USUARIO QUE NO ESTAN EN AuthCreateUserRequest
-//    4-COMO SE PASA EL ROLE O LA LISTA DE ROLES POR PARAMETRO EN POSTMAN
-//        5-VER QUE AUTORIZACIONES ESPECIALES PUEDE HACER EL DEVELOPER(PODRIA ACCEDER A TODO??)
 
 
 
