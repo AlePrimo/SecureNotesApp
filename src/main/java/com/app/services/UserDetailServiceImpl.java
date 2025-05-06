@@ -13,12 +13,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +69,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     }
 
 
-    public AuthResponse createUser(AuthCreateUserRequest authCreateUserRequest) {
+    public AuthResponse createUser(AuthCreateUserRequest authCreateUserRequest) throws AccessDeniedException {
 
         String username = authCreateUserRequest.username();
         String password = authCreateUserRequest.password();
@@ -76,10 +78,39 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
         Set<RoleEntity> roleEntitySet = this.roleEntityService.findRoleEntityByRoleEnumIn(roleRequest).stream().collect(Collectors.toSet());
 
-
         if (roleEntitySet.isEmpty()) {
+            throw new IllegalArgumentException("La lista de roles no existe");
+        }
 
-            throw new IllegalArgumentException("The specified roles does not exist");
+        boolean isCreatingAdmin = roleEntitySet.stream()
+                .anyMatch(role -> role.getRoleEnum().name().equalsIgnoreCase("ADMIN"));
+
+
+        boolean isCreatingDeveloper = roleEntitySet.stream()
+                .anyMatch(role -> role.getRoleEnum().name().equalsIgnoreCase("DEVELOPER"));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (isCreatingAdmin) {
+
+            boolean isDeveloper = auth != null && auth.isAuthenticated() &&
+                    auth.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_DEVELOPER"));
+
+            if (!isDeveloper) {
+                throw new AccessDeniedException("Solo los usuarios con rol DEVELOPER pueden crear un usuario ADMIN");
+            }
+        }
+
+
+        if (isCreatingDeveloper) {
+            boolean isDeveloper = auth != null && auth.isAuthenticated() &&
+                    auth.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_DEVELOPER"));
+            if (!isDeveloper) {
+                throw new AccessDeniedException("Solo los usuarios con rol DEVELOPER pueden crear otro usuario DEVELOPER");
+            }
+
         }
 
 
@@ -97,30 +128,30 @@ public class UserDetailServiceImpl implements UserDetailsService {
                 .accountNotExpired(true)
                 .build();
 
-
         UserEntity userCreated = this.userEntityService.save(userEntity);
-
 
         ArrayList<SimpleGrantedAuthority> authorityList = new ArrayList<>();
 
-        userCreated.getRoles().forEach(role -> authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
+        userCreated.getRoles().forEach(role ->
+                authorityList.add(new SimpleGrantedAuthority("ROLE_".concat(role.getRoleEnum().name()))));
 
         userCreated.getRoles()
                 .stream()
                 .flatMap(role -> role.getPermissions().stream())
-                .forEach(permission -> authorityList.add(new SimpleGrantedAuthority(permission.getName())));
+                .forEach(permission ->
+                        authorityList.add(new SimpleGrantedAuthority(permission.getName())));
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userCreated.getUsername(), userCreated.getPassword(), authorityList);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userCreated.getUsername(),
+                userCreated.getPassword(),
+                authorityList);
 
         String accessToken = jwtUtils.createToken(authentication);
 
-        AuthResponse authResponse = new AuthResponse(userCreated.getUsername(), "User created succesfully", accessToken, true);
-
-
-        return authResponse;
-
+        return new AuthResponse(userCreated.getUsername(), "Usuario Creado exitosamente", accessToken, true);
 
     }
+
 
 
 }
