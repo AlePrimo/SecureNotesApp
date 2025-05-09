@@ -4,6 +4,7 @@ package com.app.config;
 import com.app.entities.PermissionEntity;
 import com.app.entities.RoleEntity;
 import com.app.entities.RoleEnum;
+import com.app.entities.UserEntity;
 import com.app.services.entitiyservices.implementations.PermissionEntityService;
 import com.app.services.entitiyservices.implementations.RoleEntityService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
 
-        List<String> perms = List.of("READ", "WRITE", "DELETE", "CREATE_ADMIN");
+        List<String> perms = List.of("READ", "WRITE", "DELETE", "CREATE_ADMIN","CREATE_DEVELOPER");
         perms.forEach(this::createPermission);
 
 
@@ -35,11 +36,13 @@ public class DataInitializer implements CommandLineRunner {
         PermissionEntity write = permissionService.findByName("WRITE").get();
         PermissionEntity delete = permissionService.findByName("DELETE").get();
         PermissionEntity createAdmin = permissionService.findByName("CREATE_ADMIN").get();
-
+        PermissionEntity createDeveloper = permissionService.findByName("CREATE_DEVELOPER").get();
 
         createRole(RoleEnum.ADMIN, Set.of(read, write, delete));
         createRole(RoleEnum.USER, Set.of(read, write));
-        createRole(RoleEnum.DEVELOPER, Set.of(read, write, delete, createAdmin));
+        createRole(RoleEnum.DEVELOPER, Set.of(read, write, delete, createAdmin,createDeveloper));
+
+    
     }
 
 
