@@ -17,7 +17,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiT1NDQVIiLCJhdXRob3JpdGllcyI6IlJPTEVfVVNFUixXUklURSxSRUFEIiwiaWF0IjoxNzQ2NTcwNDAyLCJleHAiOjE3NDY1NzIyMDIsImp0aSI6IjljZGQ4Y2Q3LTZhNTUtNDExNy04NzY5LWE2MzYxNjliZWRlNSIsIm5iZiI6MTc0NjU3MDQwMn0.iNM7oZtCpbiyDpcHTr7FR1O8yVZ67qYdSRRTKJnAyJY",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiUm9iZXJ0byIsImF1dGhvcml0aWVzIjoiUk9MRV9VU0VSLFdSSVRFLFJFQUQiLCJpYXQiOjE3NDY3NTAzNTcsImV4cCI6MTc0Njc1MjE1NywianRpIjoiMjcxNmIyYjItNDhiMy00NTg3LWE5NjUtZjdkMjE5YWExZWRmIiwibmJmIjoxNzQ2NzUwMzU3fQ.S1N4972hT5csl-g8rICX59pxwBuajn5dsyEKOvJKqE4",
 									"type": "string"
 								}
 							]
@@ -26,7 +26,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\":\"limpiezafdfdf\",\r\n    \"description\":\"petepptpeptpetpedfdfdfdfdfdteptpeptpepteptpe\"\r\n}",
+							"raw": "{\r\n    \"title\":\"epepepepepepepe\",\r\n    \"description\":\"dedededededededded\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -57,7 +57,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiT1NDQVJmc2Rmc2QiLCJhdXRob3JpdGllcyI6IlJPTEVfQURNSU4sUkVBRCxXUklURSxERUxFVEUiLCJpYXQiOjE3NDY1NzA0NjgsImV4cCI6MTc0NjU3MjI2OCwianRpIjoiYzIyZWE4ZTAtMjU5MC00YWRmLWIxMDItZDAyNWI1YWVmMGJkIiwibmJmIjoxNzQ2NTcwNDY4fQ.nvreoiR_qbx_JwdJ7cNUBQlXSMJwNoM26EHtfvZzuo8",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiT1NDQXIiLCJhdXRob3JpdGllcyI6IlJPTEVfVVNFUixXUklURSxSRUFEIiwiaWF0IjoxNzQ2NzQ5OTMxLCJleHAiOjE3NDY3NTE3MzEsImp0aSI6ImMyMTlhNTUzLWI2OGItNGIzMy1hYjllLTU3MGJkNDYyNGJkNSIsIm5iZiI6MTc0Njc0OTkzMX0.hYcrnEklyy34AvSwvxJOfBUIhi3F2CK2ixEioXizHTA",
 									"type": "string"
 								}
 							]
@@ -65,7 +65,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/notes/deleteById/1",
+							"raw": "http://localhost:8080/api/notes/deleteById/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -75,7 +75,7 @@
 								"api",
 								"notes",
 								"deleteById",
-								"1"
+								"3"
 							]
 						}
 					},
@@ -84,10 +84,20 @@
 				{
 					"name": "Find Note By Id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiSm9zZSIsImF1dGhvcml0aWVzIjoiUk9MRV9ERVZFTE9QRVIsREVMRVRFLENSRUFURV9ERVZFTE9QRVIsQ1JFQVRFX0FETUlOLFdSSVRFLFJFQUQiLCJpYXQiOjE3NDY3NDk2ODgsImV4cCI6MTc0Njc1MTQ4OCwianRpIjoiOWRmYTI0NTktOTM3Yi00MmZhLTlmNTktYjhmMGI2YmRhYzJjIiwibmJmIjoxNzQ2NzQ5Njg4fQ.t_P0yRryF3rxqLA6KITARtLZXRxzXtjrroXrwFElyL4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/notes/findById/",
+							"raw": "http://localhost:8080/api/notes/findById/3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -97,7 +107,7 @@
 								"api",
 								"notes",
 								"findById",
-								""
+								"3"
 							]
 						}
 					},
@@ -106,6 +116,16 @@
 				{
 					"name": "Find All",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiSm9zZSIsImF1dGhvcml0aWVzIjoiUk9MRV9ERVZFTE9QRVIsREVMRVRFLENSRUFURV9ERVZFTE9QRVIsQ1JFQVRFX0FETUlOLFdSSVRFLFJFQUQiLCJpYXQiOjE3NDY3NDk2ODgsImV4cCI6MTc0Njc1MTQ4OCwianRpIjoiOWRmYTI0NTktOTM3Yi00MmZhLTlmNTktYjhmMGI2YmRhYzJjIiwibmJmIjoxNzQ2NzQ5Njg4fQ.t_P0yRryF3rxqLA6KITARtLZXRxzXtjrroXrwFElyL4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -127,10 +147,29 @@
 				{
 					"name": "Update Note",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiam9zZSAiLCJhdXRob3JpdGllcyI6IkRFTEVURSxSRUFELFJPTEVfQURNSU4sV1JJVEUiLCJpYXQiOjE3NDY3NTAwMjYsImV4cCI6MTc0Njc1MTgyNiwianRpIjoiZTQ4MzMzMTEtNzBmZi00NWY5LWI1ZjQtOGEyOWQ3NTg0OTU1IiwibmJmIjoxNzQ2NzUwMDI2fQ.MLsYiZ4KGNTQIeLxuOagZ1JlwX9NE8FjCfdV2DQSBYI",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"admin al ataque\",\r\n    \"description\":\"cambiara la notaaa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8080/api/notes/updateNote/",
+							"raw": "http://localhost:8080/api/notes/updateNote/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -140,7 +179,7 @@
 								"api",
 								"notes",
 								"updateNote",
-								""
+								"2"
 							]
 						}
 					},
@@ -158,7 +197,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"OSCARfsdfsd\",\r\n  \"password\": \"PDEfrfrfrD\",\r\n  \"roleRequest\": {\r\n    \"roleListName\": [\"ADMIN\"]\r\n  }\r\n}",
+							"raw": "{\r\n  \"username\": \"Roberto\",\r\n  \"password\": \"Perfumo\",\r\n  \"roleRequest\": {\r\n    \"roleListName\": [\"USER\"]\r\n  }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -188,7 +227,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\"username\": \"OSCAR\",\r\n  \"password\": \"PDEDEDEDEDED\"\r\n  \r\n}",
+							"raw": "{\r\n  \"username\": \"Jose\",\r\n  \"password\": \"developer2\"\r\n \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -214,10 +253,29 @@
 				{
 					"name": "Create ADMIN",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiSm9zZSIsImF1dGhvcml0aWVzIjoiUk9MRV9ERVZFTE9QRVIsREVMRVRFLENSRUFURV9ERVZFTE9QRVIsQ1JFQVRFX0FETUlOLFdSSVRFLFJFQUQiLCJpYXQiOjE3NDY3NDk2ODgsImV4cCI6MTc0Njc1MTQ4OCwianRpIjoiOWRmYTI0NTktOTM3Yi00MmZhLTlmNTktYjhmMGI2YmRhYzJjIiwibmJmIjoxNzQ2NzQ5Njg4fQ.t_P0yRryF3rxqLA6KITARtLZXRxzXtjrroXrwFElyL4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"jose \",\r\n  \"password\": \"admn\",\r\n  \"roleRequest\": {\r\n    \"roleListName\": [\"ADMIN\"]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/createAdmin",
+							"raw": "http://localhost:8080/api/auth/create-admin",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -226,7 +284,7 @@
 							"path": [
 								"api",
 								"auth",
-								"createAdmin"
+								"create-admin"
 							]
 						}
 					},
@@ -235,10 +293,29 @@
 				{
 					"name": "Create Developer",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiTWlndWVsICIsImF1dGhvcml0aWVzIjoiUk9MRV9ERVZFTE9QRVIsV1JJVEUsREVMRVRFLFJFQUQsQ1JFQVRFX0FETUlOLENSRUFURV9ERVZFTE9QRVIiLCJpYXQiOjE3NDY3NDk0MDIsImV4cCI6MTc0Njc1MTIwMiwianRpIjoiNjg3ZDRjMTktMWQxYi00M2FlLTg5OTQtMDRkYzIxNDdkMmRmIiwibmJmIjoxNzQ2NzQ5NDAyfQ.82N0ypsVzrSK-vTt69XUjZkE0xBSXXc2h72ayhUnXKw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"Jose\",\r\n  \"password\": \"developer2\",\r\n  \"roleRequest\": {\r\n    \"roleListName\": [\"DEVELOPER\"]\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8080/api/auth/createDeveloper",
+							"raw": "http://localhost:8080/api/auth/create-developer",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -247,7 +324,102 @@
 							"path": [
 								"api",
 								"auth",
-								"createDeveloper"
+								"create-developer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiSm9zZSIsImF1dGhvcml0aWVzIjoiQ1JFQVRFX0FETUlOLENSRUFURV9ERVZFTE9QRVIsREVMRVRFLFJFQUQsUk9MRV9ERVZFTE9QRVIsV1JJVEUiLCJpYXQiOjE3NDY3NTQ3MDQsImV4cCI6MTc0Njc1NjUwNCwianRpIjoiM2MxYTgxMTYtMzc1Ny00Mzg0LThiYjktZDdiMzFmMDY0OWRjIiwibmJmIjoxNzQ2NzU0NzA0fQ.VpknO-iQx8CbeTE2NHbovzNpXO3A6jawbvTCzX-wLGk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/deleteUserById/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"deleteUserById",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find all Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiSm9zZSIsImF1dGhvcml0aWVzIjoiQ1JFQVRFX0FETUlOLENSRUFURV9ERVZFTE9QRVIsREVMRVRFLFJFQUQsUk9MRV9ERVZFTE9QRVIsV1JJVEUiLCJpYXQiOjE3NDY3NTQ3MDQsImV4cCI6MTc0Njc1NjUwNCwianRpIjoiM2MxYTgxMTYtMzc1Ny00Mzg0LThiYjktZDdiMzFmMDY0OWRjIiwibmJmIjoxNzQ2NzU0NzA0fQ.VpknO-iQx8CbeTE2NHbovzNpXO3A6jawbvTCzX-wLGk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/findAllUsers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"findAllUsers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find By id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBVVRIMEpXVC1CQUNLRU5EIiwic3ViIjoiSm9zZSIsImF1dGhvcml0aWVzIjoiQ1JFQVRFX0FETUlOLENSRUFURV9ERVZFTE9QRVIsREVMRVRFLFJFQUQsUk9MRV9ERVZFTE9QRVIsV1JJVEUiLCJpYXQiOjE3NDY3NTQ3MDQsImV4cCI6MTc0Njc1NjUwNCwianRpIjoiM2MxYTgxMTYtMzc1Ny00Mzg0LThiYjktZDdiMzFmMDY0OWRjIiwibmJmIjoxNzQ2NzU0NzA0fQ.VpknO-iQx8CbeTE2NHbovzNpXO3A6jawbvTCzX-wLGk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/findUserById/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"findUserById",
+								"4"
 							]
 						}
 					},

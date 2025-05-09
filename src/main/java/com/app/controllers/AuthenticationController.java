@@ -16,8 +16,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -78,7 +81,7 @@ public class AuthenticationController {
 
 
 
-    @DeleteMapping("/deleteById/{id}")
+    @DeleteMapping("/deleteUserById/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         Optional<UserEntity> userOptional = userEntityService.findById(id);
@@ -92,7 +95,44 @@ public class AuthenticationController {
     }
 
 
+    @GetMapping("/findAllUsers")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    public ResponseEntity<?> findAllUsers() {
+        List<UserEntity> users = this.userEntityService.findAll();
 
+        List<Map<String, Object>> result = users.stream().map(user -> {
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("id", user.getId());
+            userInfo.put("username", user.getUsername());
+            userInfo.put("roles", user.getRoles().stream()
+                    .map(role -> role.getRoleEnum().name())
+                    .collect(Collectors.toList()));
+            return userInfo;
+        }).toList();
+
+        return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping("/findUserById/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    public ResponseEntity<?> findUserById(@PathVariable Long id) {
+        Optional<UserEntity> optionalUser = this.userEntityService.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        UserEntity user = optionalUser.get();
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("id", user.getId());
+        userInfo.put("username", user.getUsername());
+        userInfo.put("roles", user.getRoles().stream()
+                .map(role -> role.getRoleEnum().name())
+                .collect(Collectors.toList()));
+
+        return ResponseEntity.ok(userInfo);
+    }
 
 
 }
